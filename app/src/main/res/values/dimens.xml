@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Padding & Margin standar -->
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">24dp</dimen>
+    <dimen name="padding_extra_large">32dp</dimen>
+
+    <!-- Ukuran Elemen UI -->
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="spacer_medium">16dp</dimen>
+    <dimen name="spacer_small">8dp</dimen>
+
+    <!-- Text Size (Opsional, karena Compose biasanya pakai MaterialTheme typography) -->
+    <dimen name="text_size_title">20sp</dimen>
+</resources>

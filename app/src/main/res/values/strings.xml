@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">MYPROJEK</string>
+
+    <!-- Auth Screens -->
+    <string name="welcome_title">Selamat Datang</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register">Daftar Akun Baru</string>
+    <string name="error_login">Email atau Password salah</string>
+    <string name="success_register">Registrasi Berhasil! Silakan Login.</string>
+    <string name="fail_register">Registrasi Gagal (Email mungkin sudah ada).</string>
+
+    <!-- Home Screen -->
+    <string name="title_home">Daftar Obat Saya</string>
+    <string name="empty_obat">Belum ada obat. Tekan + untuk menambah.</string>
+    <string name="cd_logout">Logout</string>
+    <string name="cd_add_obat">Tambah Obat</string>
+    <string name="cd_delete_obat">Hapus Obat</string>
+    <string name="label_jam_minum">Jam: %1$s</string> <!-- Placeholder text -->
+
+    <!-- Entry Screen -->
+    <string name="title_entry">Tambah Obat Baru</string>
+    <string name="label_nama_obat">Nama Obat</string>
+    <string name="label_dosis">Dosis (misal: 1 Tablet)</string>
+    <string name="label_frekuensi">Frekuensi (misal: 3x Sehari)</string>
+    <string name="label_jam_input">Jam Minum (Format HH:mm)</string>
+    <string name="btn_save">Simpan &amp; Atur Pengingat</string>
+    <string name="error_fill_all">Harap isi semua kolom!</string>
+
+    <!-- Notification -->
+    <string name="notif_channel_name">Pengingat Obat</string>
+    <string name="notif_title">Waktunya Minum Obat</string>
+    <string name="notif_message_default">Jangan lupa minum obat Anda!</string>
+    <string name="notif_message_format">Waktunya minum: %1$s</string>
+    <!-- Search -->
+    <string name="hint_search">Cari obat...</string>
+
+    <!-- Edit Mode -->
+    <string name="title_edit">Edit Obat</string>
+    <string name="btn_update">Update Obat</string>
+    <string name="msg_update_success">Data berhasil diperbarui!</string>
+
+</resources>
