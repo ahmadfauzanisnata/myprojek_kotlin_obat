@@ -1,5 +1,10 @@
 package com.example.myprojek.ui.view.home
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,9 +18,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.myprojek.R
 import com.example.myprojek.data.entity.Obat
 import com.example.myprojek.ui.viewmodel.HomeViewModel
@@ -27,12 +33,35 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     currentUserEmail: String,
     onNavigateToEntry: () -> Unit,
-    onNavigateToEdit: (Int) -> Unit, // Callback baru untuk edit
+    onNavigateToEdit: (Int) -> Unit,
     onLogout: () -> Unit
 ) {
+    // --- LOGIK IZIN NOTIFIKASI ---
+    val context = LocalContext.current
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            // Logika tambahan jika izin diberikan/ditolak bisa diletakkan di sini
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permissionCheck = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+    // ----------------------------
+
     LaunchedEffect(currentUserEmail) {
         viewModel.getObatList(currentUserEmail)
     }
+
     val obatList by viewModel.homeUiState.collectAsState()
     val scope = rememberCoroutineScope()
 
@@ -75,7 +104,6 @@ fun HomeScreen(
                     .padding(vertical = dimensionResource(R.dimen.padding_small)),
                 singleLine = true
             )
-            // --------------------
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacer_small)),
@@ -85,7 +113,7 @@ fun HomeScreen(
                     ObatCard(
                         obat = obat,
                         onDelete = { scope.launch { viewModel.deleteObat(obat) } },
-                        onClick = { onNavigateToEdit(obat.id) } // Klik card untuk edit
+                        onClick = { onNavigateToEdit(obat.id) }
                     )
                 }
                 if (obatList.isEmpty()) {
@@ -107,7 +135,7 @@ fun ObatCard(obat: Obat, onDelete: () -> Unit, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_elevation)),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() } // Buat card bisa diklik
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier
