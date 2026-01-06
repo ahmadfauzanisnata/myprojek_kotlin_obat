@@ -11,6 +11,10 @@ interface AppDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.ABORT)
     suspend fun registerUser(user: User)
 
+
+    @Query("UPDATE users SET passwordHash = :newPassword WHERE email = :email")
+    suspend fun updatePassword(email: String, newPassword: String)
+
     @androidx.room.Query("SELECT * FROM users WHERE email = :email")
     suspend fun getUser(email: String): User?
 

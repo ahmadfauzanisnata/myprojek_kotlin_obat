@@ -41,4 +41,64 @@
     <string name="btn_update">Update Obat</string>
     <string name="msg_update_success">Data berhasil diperbarui!</string>
 
+    <string name="error_email_format">Format email tidak valid</string>
+    <string name="error_password_length">Password harus lebih dari 5 karakter</string>
+    <string name="error_email_not_found">Email tidak terdaftar</string>
+    <string name="error_email_exists">Email sudah terdaftar</string>
+    <string name="error_password_mismatch">Password konfirmasi tidak sama</string>
+
+    <!-- Navigation Texts -->
+    <string name="text_no_account">Belum punya akun? Daftar di sini</string>
+    <string name="text_forgot_password">Lupa Password?</string>
+    <string name="text_have_account">Sudah punya akun? Login</string>
+
+    <!-- Register Screen -->
+    <string name="title_register">Daftar Akun</string>
+    <string name="label_confirm_password">Konfirmasi Password</string>
+    <string name="btn_register_submit">Daftar Sekarang</string>
+
+    <!-- Forgot Password Screen -->
+    <string name="title_forgot_password">Reset Password</string>
+    <string name="label_new_password">Password Baru</string>
+    <string name="btn_reset_password">Ganti Password</string>
+    <string name="msg_reset_success">Password berhasil diganti. Silakan login.</string>
+    <string name="msg_reset_fail">Gagal mengubah password. Periksa kembali email.</string>
+    <string name="msg_reset_email_not_found">Email tidak ditemukan.</string>
+    <string name="msg_reset_password_success">Password berhasil diubah.</string>
+
+    <string name="text_min_chars">Min. 6 Karakter</string>
+    <string name="btn_back_to_login">Kembali ke Login</string>
+
+
+
+    <string name="cd_back">Kembali</string>
+
+    <!-- tambahkan string berikut ke strings.xml -->
+    <string name="btn_back">Kembali</string>
+    <string name="subtitle_forgot_password">Masukkan email Anda dan buat password baru untuk mengatur ulang akun</string>
+    <string name="welcome_back">Selamat Datang Kembali</string>
+    <string name="welcome_subtitle">Silakan masuk untuk melanjutkan</string>
+    <string name="hide_password">Sembunyikan password</string>
+    <string name="show_password">Tampilkan password</string>
+    <string name="or_continue_with">atau lanjutkan dengan</string>
+
+    <string name="create_account">Buat Akun</string>
+    <string name="register_subtitle">Isi data untuk membuat akun baru</string>
+    <string name="label_full_name">Nama Lengkap</string>
+    <string name="agree_to_terms">Saya menyetujui</string>
+    <string name="terms_of_service">Syarat and Ketentuan</string>
+
+    <!-- Tambahkan string baru -->
+    <string name="btn_register_new_account"> Daftar Akun Baru? </string>
+
+    <!-- Tambahkan string baru untuk konsistensi -->
+    <string name="text_have_account_login">Sudah punya akun? Masuk</string>
+
+
+
+
+
+
+
+
 </resources>

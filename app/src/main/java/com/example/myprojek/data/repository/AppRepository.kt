@@ -6,11 +6,15 @@ import com.example.myprojek.data.entity.User
 import kotlinx.coroutines.flow.Flow
 
 class AppRepository(private val appDao: AppDao) {
+
     // User logic
     suspend fun register(user: User) = appDao.registerUser(user)
     suspend fun login(email: String) = appDao.getUser(email)
 
-    // Obat logic
+    // TAMBAHAN: Reset Password
+    suspend fun resetPassword(email: String, newPass: String) = appDao.updatePassword(email, newPass)
+
+    // Obat logic (Tetap sama)
     fun getAllObat(email: String): Flow<List<Obat>> = appDao.getAllObatByUser(email)
     fun getObatStream(id: Int): Flow<Obat> = appDao.getObatById(id)
     suspend fun insertObat(obat: Obat) = appDao.insertObat(obat)
