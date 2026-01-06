@@ -3,11 +3,14 @@ package com.example.myprojek.data.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+// Di Obat.kt, pastikan ada properti ini:
 @Entity(tableName = "obat")
-data class Obat(    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-                    val namaObat: String,
-                    val dosis: String,     // e.g., "1 Tablet"
-                    val frekuensi: String, // e.g., "3x Sehari"
-                    val jamMinum: String,  // e.g., "08:00" (Untuk alarm sederhana)
-                    val userEmail: String  // Foreign Key logic (milik siapa obat ini)
+data class Obat(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val namaObat: String,
+    val dosis: String,
+    val frekuensi: String,
+    val jamMinum: String,
+    val userEmail: String // email pengguna
 )

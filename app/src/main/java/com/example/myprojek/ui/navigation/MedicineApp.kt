@@ -26,8 +26,12 @@ enum class Screen {
 @Composable
 fun MedicineApp() {
     val navController = rememberNavController()
-    // ViewModel di-share agar state email/password bisa dikelola
+
+    // PERBAIKAN DI SINI: Gunakan factory dari AppViewModelProvider
     val authViewModel: AuthViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
+    // Atau jika menggunakan viewModel() tanpa parameter factory juga bisa
+    // val authViewModel: AuthViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Login.name) {
 
@@ -65,12 +69,9 @@ fun MedicineApp() {
             RegisterScreen(
                 viewModel = authViewModel,
                 onRegisterSuccess = {
-                    // Setelah register berhasil, arahkan ke Login agar user login manual
-                    // TAPI jangan panggil popBackStack karena kita mau tampilkan pesan sukses dulu
-                    // User akan tekan tombol "Kembali ke Login" secara manual
+                    // Setelah register berhasil, biarkan user baca pesan sukses
                 },
                 onNavigateBack = {
-                    // Hanya clear fields jika user tekan back secara manual
                     if (authViewModel.registerSuccessMessage == null) {
                         authViewModel.clearFields()
                     }
@@ -84,7 +85,6 @@ fun MedicineApp() {
             ForgotPasswordScreen(
                 viewModel = authViewModel,
                 onNavigateBack = {
-                    // Hanya clear fields jika user tekan back secara manual
                     if (authViewModel.resetPasswordSuccessMessage == null) {
                         authViewModel.clearFields()
                     }
@@ -95,6 +95,7 @@ fun MedicineApp() {
 
         // --- HOME ---
         composable(Screen.Home.name) {
+            // PERBAIKAN DI SINI: Juga gunakan factory untuk HomeViewModel
             val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
             HomeScreen(
                 viewModel = homeViewModel,
@@ -120,6 +121,7 @@ fun MedicineApp() {
                 defaultValue = -1
             })
         ) { backStackEntry ->
+            // PERBAIKAN DI SINI: Juga gunakan factory untuk EntryViewModel
             val entryViewModel: EntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
             val obatId = backStackEntry.arguments?.getInt("obatId") ?: -1
 

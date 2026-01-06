@@ -51,6 +51,13 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
+    // Di HomeViewModel.kt, tambahkan fungsi ini:
+    fun getTodayReminderCount(obatList: List<Obat>): Int {
+        // Logika untuk menghitung berapa reminder hari ini
+        // Untuk sementara, return count semua obat
+        return obatList.size
+    }
+
     suspend fun deleteObat(obat: Obat) {
         repository.deleteObat(obat)
     }
