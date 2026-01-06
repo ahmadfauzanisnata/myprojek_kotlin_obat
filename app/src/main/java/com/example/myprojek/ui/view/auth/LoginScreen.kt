@@ -43,6 +43,16 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToForgot: () -> Unit
 ) {
+    // Effect untuk mengambil email dari ViewModel saat screen muncul
+    LaunchedEffect(Unit) {
+        // Cek apakah ada email yang disimpan dari halaman lain
+        viewModel.getAndClearLastSuccessfulEmail()?.let { email ->
+            if (email.isNotEmpty()) {
+                viewModel.emailInput = email
+            }
+        }
+    }
+
     if (viewModel.isLoggedIn) {
         LaunchedEffect(Unit) {
             onLoginSuccess()
@@ -60,6 +70,7 @@ fun LoginScreen(
                 )
             )
     ) {
+        // ... (sisa kode LoginScreen tetap sama, tidak perlu diubah)
         // Background decorative elements
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -150,7 +161,7 @@ fun LoginScreen(
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Email field
+                    // Email field - AKAN TERISI OTOMATIS JIKA ADA EMAIL DARI REGISTER/FORGOT PASSWORD
                     OutlinedTextField(
                         value = viewModel.emailInput,
                         onValueChange = { viewModel.emailInput = it },

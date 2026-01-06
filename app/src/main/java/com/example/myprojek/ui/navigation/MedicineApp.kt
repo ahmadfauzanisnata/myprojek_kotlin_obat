@@ -1,6 +1,7 @@
 package com.example.myprojek.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,6 +16,7 @@ import com.example.myprojek.ui.view.home.HomeScreen
 import com.example.myprojek.ui.viewmodel.AuthViewModel
 import com.example.myprojek.ui.viewmodel.EntryViewModel
 import com.example.myprojek.ui.viewmodel.HomeViewModel
+
 import com.example.myprojek.uiimport.AppViewModelProvider
 
 enum class Screen {
@@ -31,6 +33,15 @@ fun MedicineApp() {
 
         // --- LOGIN ---
         composable(Screen.Login.name) {
+            // Effect untuk mengambil email dari ViewModel saat screen muncul
+            LaunchedEffect(Unit) {
+                // Cek apakah ada email yang disimpan dari halaman lain
+                val email = authViewModel.getAndClearLastSuccessfulEmail()
+                if (!email.isNullOrEmpty()) {
+                    authViewModel.emailInput = email
+                }
+            }
+
             LoginScreen(
                 viewModel = authViewModel,
                 onLoginSuccess = {
@@ -38,8 +49,14 @@ fun MedicineApp() {
                         popUpTo(Screen.Login.name) { inclusive = true }
                     }
                 },
-                onNavigateToRegister = { navController.navigate(Screen.Register.name) },
-                onNavigateToForgot = { navController.navigate(Screen.ForgotPassword.name) }
+                onNavigateToRegister = {
+                    authViewModel.clearFields()
+                    navController.navigate(Screen.Register.name)
+                },
+                onNavigateToForgot = {
+                    authViewModel.clearFields()
+                    navController.navigate(Screen.ForgotPassword.name)
+                }
             )
         }
 
@@ -49,9 +66,16 @@ fun MedicineApp() {
                 viewModel = authViewModel,
                 onRegisterSuccess = {
                     // Setelah register berhasil, arahkan ke Login agar user login manual
-                    navController.popBackStack()
+                    // TAPI jangan panggil popBackStack karena kita mau tampilkan pesan sukses dulu
+                    // User akan tekan tombol "Kembali ke Login" secara manual
                 },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = {
+                    // Hanya clear fields jika user tekan back secara manual
+                    if (authViewModel.registerSuccessMessage == null) {
+                        authViewModel.clearFields()
+                    }
+                    navController.popBackStack()
+                }
             )
         }
 
@@ -59,7 +83,13 @@ fun MedicineApp() {
         composable(Screen.ForgotPassword.name) {
             ForgotPasswordScreen(
                 viewModel = authViewModel,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = {
+                    // Hanya clear fields jika user tekan back secara manual
+                    if (authViewModel.resetPasswordSuccessMessage == null) {
+                        authViewModel.clearFields()
+                    }
+                    navController.popBackStack()
+                }
             )
         }
 

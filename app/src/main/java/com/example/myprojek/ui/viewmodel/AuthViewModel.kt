@@ -22,6 +22,9 @@ class AuthViewModel(private val repository: AppRepository) : ViewModel() {
     var isLoggedIn by mutableStateOf(false)
     var currentUserEmail by mutableStateOf("")
 
+    // STATE BARU: untuk menyimpan email yang berhasil
+    private var lastSuccessfulEmail: String? = null
+
     // --- Validasi ---
     fun validateInput(): Boolean {
         if (!Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
@@ -77,6 +80,9 @@ class AuthViewModel(private val repository: AppRepository) : ViewModel() {
                     repository.register(User(emailInput, passwordInput, "User"))
                     errorMessage = null
 
+                    // SIMPAN EMAIL YANG BERHASIL
+                    lastSuccessfulEmail = emailInput
+
                     // SET PESAN SUKSES KHUSUS REGISTER
                     registerSuccessMessage = "Akun berhasil dibuat! Anda dapat login sekarang."
 
@@ -109,6 +115,9 @@ class AuthViewModel(private val repository: AppRepository) : ViewModel() {
                 // 3. Update password
                 repository.resetPassword(emailInput, passwordInput)
 
+                // SIMPAN EMAIL YANG BERHASIL
+                lastSuccessfulEmail = emailInput
+
                 // 4. Set pesan sukses KHUSUS RESET PASSWORD
                 resetPasswordSuccessMessage = "Password berhasil diubah. Anda dapat login dengan password baru."
                 errorMessage = null
@@ -126,11 +135,24 @@ class AuthViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
+    // FUNGSI BARU: untuk mengambil email yang berhasil
+    fun getAndClearLastSuccessfulEmail(): String? {
+        val email = lastSuccessfulEmail
+        lastSuccessfulEmail = null // Reset setelah diambil
+        return email
+    }
+
+    // FUNGSI BARU: untuk cek apakah ada email yang disimpan
+    fun hasSavedEmail(): Boolean {
+        return lastSuccessfulEmail != null
+    }
+
     fun logout() {
         isLoggedIn = false
         currentUserEmail = ""
         clearAllMessages()
         clearFields()
+        lastSuccessfulEmail = null // Reset juga email yang disimpan
     }
 
     // Fungsi untuk reset semua messages
@@ -150,7 +172,7 @@ class AuthViewModel(private val repository: AppRepository) : ViewModel() {
 
     // Fungsi khusus untuk reset setelah register sukses
     fun afterRegisterSuccess() {
-        emailInput = "" // Kosongkan email juga
+        // JANGAN kosongkan email di sini, biarkan untuk diambil oleh LoginScreen
         passwordInput = ""
         confirmPasswordInput = ""
         registerSuccessMessage = null // Reset pesan sukses register
@@ -158,6 +180,7 @@ class AuthViewModel(private val repository: AppRepository) : ViewModel() {
 
     // Fungsi khusus untuk reset setelah reset password sukses
     fun afterResetPasswordSuccess() {
+        // JANGAN kosongkan email di sini, biarkan untuk diambil oleh LoginScreen
         passwordInput = ""
         confirmPasswordInput = ""
         resetPasswordSuccessMessage = null // Reset pesan sukses reset password
