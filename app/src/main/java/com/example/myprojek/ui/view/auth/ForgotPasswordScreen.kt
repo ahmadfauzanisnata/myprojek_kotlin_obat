@@ -9,8 +9,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,25 +36,29 @@ import com.example.myprojek.ui.theme.GradientEnd
 import com.example.myprojek.ui.theme.PrimaryColor
 import com.example.myprojek.ui.theme.SuccessColor
 import com.example.myprojek.ui.viewmodel.AuthViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun ForgotPasswordScreen(
     viewModel: AuthViewModel,
     onNavigateBack: () -> Unit
 ) {
-    // JIKA SUDAH SUKSES, TAMPILKAN HALAMAN SUKSES TERPISAH
-    if (viewModel.resetPasswordSuccessMessage != null) {
-        ForgotPasswordSuccessScreen(
-            successMessage = viewModel.resetPasswordSuccessMessage!!,
-            onNavigateBack = {
-                viewModel.afterResetPasswordSuccess()
-                onNavigateBack()
-            }
-        )
-        return
+    // State untuk auto-navigate setelah sukses
+    var showSuccess by remember { mutableStateOf(false) }
+    // State untuk visibility password
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    // Effect untuk auto-navigate setelah sukses
+    LaunchedEffect(viewModel.resetPasswordSuccessMessage) {
+        if (viewModel.resetPasswordSuccessMessage != null) {
+            showSuccess = true
+            // Delay 2 detik sebelum kembali otomatis
+            delay(2000)
+            viewModel.afterResetPasswordSuccess()
+            onNavigateBack()
+        }
     }
 
-    // JIKA BELUM SUKSES, TAMPILKAN FORM BIASA
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -108,15 +115,69 @@ fun ForgotPasswordScreen(
                 }
             }
 
-            // Main Content Card
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+            // LOGO & JUDUL DI LUAR KOTAK PUTIH
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_large))
+            ) {
+                // Icon dengan gradient background - DI LUAR KARD
+                Box(
+                    modifier = Modifier
+                        .size(dimensionResource(R.dimen.logo_size_small))
+                        .clip(RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)))
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(PrimaryColor, GradientEnd)
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_password_reset),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(dimensionResource(R.dimen.icon_size_large))
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+
+                // Title - DI LUAR KARD
+                Text(
+                    text = stringResource(R.string.title_forgot_password),
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 28.sp
+                    ),
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacer_small)))
+
+                // Subtitle - DI LUAR KARD
+                Text(
+                    text = stringResource(R.string.subtitle_forgot_password),
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 16.sp
+                    ),
+                    color = Color.White.copy(alpha = 0.9f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            // Main Content Card (HANYA FORM SAJA)
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = dimensionResource(R.dimen.padding_medium))
                     .shadow(
                         elevation = dimensionResource(R.dimen.card_elevation),
                         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
-                        spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                        spotColor = Color.White.copy(alpha = 0.3f)
                     ),
                 shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
                 colors = CardDefaults.cardColors(
@@ -129,55 +190,57 @@ fun ForgotPasswordScreen(
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Icon dengan gradient background
-                    Box(
-                        modifier = Modifier
-                            .size(dimensionResource(R.dimen.logo_size_small))
-                            .clip(RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)))
-                            .background(
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(PrimaryColor, GradientEnd)
+                    // JIKA SUDAH SUKSES, TAMPILKAN PESAN SUKSES SAJA
+                    if (showSuccess && viewModel.resetPasswordSuccessMessage != null) {
+                        // Success Message Card - TETAP DI CARD YANG SAMA
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            // Success Icon dengan background
+                            Box(
+                                modifier = Modifier
+                                    .size(dimensionResource(R.dimen.logo_size_small))
+                                    .clip(RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)))
+                                    .background(
+                                        brush = Brush.horizontalGradient(
+                                            colors = listOf(SuccessColor, SuccessColor.copy(alpha = 0.7f))
+                                        )
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_success),
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(dimensionResource(R.dimen.icon_size_large))
                                 )
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_password_reset),
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_large))
-                        )
+                            }
+
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_large)))
+
+                            // Title
+                            Text(
+                                text = "Password Berhasil Diubah!",
+                                style = MaterialTheme.typography.headlineMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 24.sp
+                                ),
+                                color = SuccessColor,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacer_small)))
+
+
+
+                            // Jangan tampilkan form lagi setelah sukses
+                            return@Column
+                        }
                     }
 
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_large)))
-
-                    // Title
-                    Text(
-                        text = stringResource(R.string.title_forgot_password),
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 28.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacer_small)))
-
-                    // Subtitle
-                    Text(
-                        text = stringResource(R.string.subtitle_forgot_password),
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 16.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 22.sp,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_xlarge)))
+                    // JIKA BELUM SUKSES, TAMPILKAN FORM RESET PASSWORD
 
                     // Email field with icon
                     OutlinedTextField(
@@ -211,7 +274,7 @@ fun ForgotPasswordScreen(
 
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacer_medium)))
 
-                    // New Password field with icon
+                    // New Password field with icon dan visibility toggle
                     OutlinedTextField(
                         value = viewModel.passwordInput,
                         onValueChange = { viewModel.passwordInput = it },
@@ -228,7 +291,24 @@ fun ForgotPasswordScreen(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         },
-                        visualTransformation = PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { passwordVisible = !passwordVisible },
+                                modifier = Modifier.size(48.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (passwordVisible) Icons.Default.Visibility
+                                    else Icons.Default.VisibilityOff,
+                                    contentDescription = if (passwordVisible)
+                                        stringResource(R.string.hide_password)
+                                    else
+                                        stringResource(R.string.show_password),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        },
+                        visualTransformation = if (passwordVisible) VisualTransformation.None
+                        else PasswordVisualTransformation(),
                         supportingText = {
                             Text(
                                 stringResource(R.string.text_min_chars),
@@ -242,6 +322,8 @@ fun ForgotPasswordScreen(
                             focusedLabelColor = MaterialTheme.colorScheme.primary,
                             unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary,
                             focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                            unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+                            focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
                         ),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
@@ -292,7 +374,7 @@ fun ForgotPasswordScreen(
                             .height(dimensionResource(R.dimen.button_height)),
                         shape = RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
+                            containerColor = PrimaryColor,
                             contentColor = Color.White
                         ),
                         elevation = ButtonDefaults.buttonElevation(
@@ -314,143 +396,6 @@ fun ForgotPasswordScreen(
                     }
 
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacer_medium)))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ForgotPasswordSuccessScreen(
-    successMessage: String,
-    onNavigateBack: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(GradientStart, GradientEnd)
-                )
-            )
-    ) {
-        // Background decorative elements
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = dimensionResource(R.dimen.padding_xxlarge))
-        ) {
-            Image(
-                painter = painterResource(R.drawable.bg_auth_pattern),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.fillMaxWidth(),
-                alpha = 0.05f
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = dimensionResource(R.dimen.padding_large)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Success Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(
-                        elevation = dimensionResource(R.dimen.card_elevation),
-                        shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
-                        spotColor = SuccessColor.copy(alpha = 0.3f)
-                    ),
-                shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_xxlarge))
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Success Icon dengan background gradient
-                    Box(
-                        modifier = Modifier
-                            .size(dimensionResource(R.dimen.logo_size_large))
-                            .clip(RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)))
-                            .background(
-                                brush = Brush.radialGradient(
-                                    colors = listOf(SuccessColor, SuccessColor.copy(alpha = 0.7f)),
-                                    radius = 100f
-                                )
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_success),
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_xxlarge))
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_xlarge)))
-
-                    // Title Success
-                    Text(
-                        text = "Password Berhasil Diubah!",
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 28.sp
-                        ),
-                        color = SuccessColor,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_large)))
-
-                    // Success Message
-                    Text(
-                        text = successMessage,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 18.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 26.sp,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_xxlarge)))
-
-                    // Tombol untuk kembali ke Login
-                    Button(
-                        onClick = onNavigateBack,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(dimensionResource(R.dimen.button_height_large)),
-                        shape = RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = SuccessColor,
-                            contentColor = Color.White
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = dimensionResource(R.dimen.button_elevation),
-                            pressedElevation = dimensionResource(R.dimen.spacer_small)
-                        )
-                    ) {
-                        Text(
-                            text = "Kembali ke Login",
-                            style = MaterialTheme.typography.headlineSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
-                        )
-                    }
                 }
             }
         }

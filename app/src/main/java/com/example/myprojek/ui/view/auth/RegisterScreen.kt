@@ -9,6 +9,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +36,7 @@ import com.example.myprojek.ui.theme.GradientEnd
 import com.example.myprojek.ui.theme.PrimaryColor
 import com.example.myprojek.ui.theme.SuccessColor
 import com.example.myprojek.ui.viewmodel.AuthViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun RegisterScreen(
@@ -40,19 +44,22 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    // JIKA SUDAH SUKSES, TAMPILKAN HALAMAN SUKSES TERPISAH
-    if (viewModel.registerSuccessMessage != null) {
-        RegisterSuccessScreen(
-            successMessage = viewModel.registerSuccessMessage!!,
-            onNavigateBack = {
-                viewModel.afterRegisterSuccess()
-                onNavigateBack()
-            }
-        )
-        return
-    }
+    // State untuk auto-navigate setelah sukses
+    var showSuccess by remember { mutableStateOf(false) }
+    // State untuk visibility password
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-    var acceptedTerms by remember { mutableStateOf(false) }
+    // Effect untuk auto-navigate setelah sukses
+    LaunchedEffect(viewModel.registerSuccessMessage) {
+        if (viewModel.registerSuccessMessage != null) {
+            showSuccess = true
+            // Delay 2 detik sebelum kembali otomatis
+            delay(2000)
+            viewModel.afterRegisterSuccess()
+            onNavigateBack()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -155,6 +162,56 @@ fun RegisterScreen(
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // JIKA SUDAH SUKSES, TAMPILKAN PESAN SUKSES SAJA
+                    if (showSuccess && viewModel.registerSuccessMessage != null) {
+                        // Success Message Card - TETAP DI CARD YANG SAMA
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            // Success Icon dengan background
+                            Box(
+                                modifier = Modifier
+                                    .size(dimensionResource(R.dimen.logo_size_small))
+                                    .clip(RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)))
+                                    .background(
+                                        brush = Brush.horizontalGradient(
+                                            colors = listOf(SuccessColor, SuccessColor.copy(alpha = 0.7f))
+                                        )
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_success),
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(dimensionResource(R.dimen.icon_size_large))
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_large)))
+
+                            // Title
+                            Text(
+                                text = "Registrasi Berhasil!",
+                                style = MaterialTheme.typography.headlineMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 24.sp
+                                ),
+                                color = SuccessColor,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacer_small)))
+
+                            // Jangan tampilkan form lagi setelah sukses
+                            return@Column
+                        }
+                    }
+
+                    // JIKA BELUM SUKSES, TAMPILKAN FORM REGISTRASI
+
                     // Email field
                     OutlinedTextField(
                         value = viewModel.emailInput,
@@ -188,7 +245,7 @@ fun RegisterScreen(
 
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacer_medium)))
 
-                    // Password field
+                    // Password field dengan visibility toggle
                     OutlinedTextField(
                         value = viewModel.passwordInput,
                         onValueChange = { viewModel.passwordInput = it },
@@ -205,7 +262,24 @@ fun RegisterScreen(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         },
-                        visualTransformation = PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { passwordVisible = !passwordVisible },
+                                modifier = Modifier.size(48.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (passwordVisible) Icons.Default.Visibility
+                                    else Icons.Default.VisibilityOff,
+                                    contentDescription = if (passwordVisible)
+                                        stringResource(R.string.hide_password)
+                                    else
+                                        stringResource(R.string.show_password),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        },
+                        visualTransformation = if (passwordVisible) VisualTransformation.None
+                        else PasswordVisualTransformation(),
                         supportingText = {
                             Text(
                                 stringResource(R.string.text_min_chars),
@@ -219,6 +293,8 @@ fun RegisterScreen(
                             focusedLabelColor = MaterialTheme.colorScheme.primary,
                             unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary,
                             focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                            unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+                            focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
                         ),
                         singleLine = true,
                         isError = viewModel.errorMessage?.contains("password", ignoreCase = true) == true,
@@ -227,7 +303,7 @@ fun RegisterScreen(
 
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.spacer_medium)))
 
-                    // Confirm Password field
+                    // Confirm Password field dengan visibility toggle
                     OutlinedTextField(
                         value = viewModel.confirmPasswordInput,
                         onValueChange = { viewModel.confirmPasswordInput = it },
@@ -244,7 +320,24 @@ fun RegisterScreen(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         },
-                        visualTransformation = PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { confirmPasswordVisible = !confirmPasswordVisible },
+                                modifier = Modifier.size(48.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (confirmPasswordVisible) Icons.Default.Visibility
+                                    else Icons.Default.VisibilityOff,
+                                    contentDescription = if (confirmPasswordVisible)
+                                        stringResource(R.string.hide_password)
+                                    else
+                                        stringResource(R.string.show_password),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        },
+                        visualTransformation = if (confirmPasswordVisible) VisualTransformation.None
+                        else PasswordVisualTransformation(),
                         shape = RoundedCornerShape(dimensionResource(R.dimen.textfield_corner_radius)),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -252,6 +345,8 @@ fun RegisterScreen(
                             focusedLabelColor = MaterialTheme.colorScheme.primary,
                             unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary,
                             focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                            unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+                            focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
                         ),
                         singleLine = true,
                         isError = viewModel.errorMessage?.contains("konfirmasi", ignoreCase = true) == true ||
@@ -292,60 +387,19 @@ fun RegisterScreen(
                         }
                     }
 
-                    // Terms and Conditions
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = dimensionResource(R.dimen.spacer_medium)),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = acceptedTerms,
-                            onCheckedChange = { acceptedTerms = it },
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = MaterialTheme.colorScheme.primary
-                            ),
-                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_medium))
-                        )
-                        Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacer_small)))
-                        Text(
-                            text = stringResource(R.string.agree_to_terms),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f)
-                        )
-                        TextButton(
-                            onClick = { /* Navigate to terms */ },
-                            modifier = Modifier.padding(start = dimensionResource(R.dimen.spacer_small))
-                        ) {
-                            Text(
-                                text = stringResource(R.string.terms_of_service),
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_xlarge)))
 
                     // Register Button
                     Button(
                         onClick = {
-                            if (acceptedTerms) {
-                                viewModel.register(onSuccess = onRegisterSuccess)
-                            } else {
-                                viewModel.errorMessage = "Anda harus menyetujui Syarat & Ketentuan"
-                            }
+                            viewModel.register(onSuccess = onRegisterSuccess)
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(dimensionResource(R.dimen.button_height)),
                         shape = RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (acceptedTerms) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            containerColor = PrimaryColor,
                             contentColor = Color.White
                         ),
                         elevation = ButtonDefaults.buttonElevation(
@@ -354,8 +408,7 @@ fun RegisterScreen(
                             hoveredElevation = dimensionResource(R.dimen.button_elevation),
                             focusedElevation = dimensionResource(R.dimen.button_elevation),
                             disabledElevation = 0.dp
-                        ),
-                        enabled = acceptedTerms
+                        )
                     ) {
                         Text(
                             text = stringResource(R.string.btn_register_submit),
@@ -363,143 +416,6 @@ fun RegisterScreen(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
                                 letterSpacing = 0.5.sp
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun RegisterSuccessScreen(
-    successMessage: String,
-    onNavigateBack: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(GradientStart, GradientEnd)
-                )
-            )
-    ) {
-        // Background decorative elements
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = dimensionResource(R.dimen.padding_xxlarge))
-        ) {
-            Image(
-                painter = painterResource(R.drawable.bg_auth_pattern),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.fillMaxWidth(),
-                alpha = 0.05f
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = dimensionResource(R.dimen.padding_large)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Success Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(
-                        elevation = dimensionResource(R.dimen.card_elevation),
-                        shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
-                        spotColor = SuccessColor.copy(alpha = 0.3f)
-                    ),
-                shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(dimensionResource(R.dimen.padding_xxlarge))
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Success Icon dengan background gradient
-                    Box(
-                        modifier = Modifier
-                            .size(dimensionResource(R.dimen.logo_size_large))
-                            .clip(RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)))
-                            .background(
-                                brush = Brush.radialGradient(
-                                    colors = listOf(SuccessColor, SuccessColor.copy(alpha = 0.7f)),
-                                    radius = 100f
-                                )
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_success),
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size_xxlarge))
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_xlarge)))
-
-                    // Title Success
-                    Text(
-                        text = "Registrasi Berhasil!",
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 28.sp
-                        ),
-                        color = SuccessColor,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_large)))
-
-                    // Success Message
-                    Text(
-                        text = successMessage,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 18.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 26.sp,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_xxlarge)))
-
-                    // Tombol untuk kembali ke Login
-                    Button(
-                        onClick = onNavigateBack,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(dimensionResource(R.dimen.button_height_large)),
-                        shape = RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = SuccessColor,
-                            contentColor = Color.White
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = dimensionResource(R.dimen.button_elevation),
-                            pressedElevation = dimensionResource(R.dimen.spacer_small)
-                        )
-                    ) {
-                        Text(
-                            text = "Kembali ke Login",
-                            style = MaterialTheme.typography.headlineSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
                             )
                         )
                     }

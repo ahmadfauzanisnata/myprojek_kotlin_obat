@@ -1,6 +1,5 @@
 package com.example.myprojek.ui.view.auth
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -70,7 +69,6 @@ fun LoginScreen(
                 )
             )
     ) {
-        // ... (sisa kode LoginScreen tetap sama, tidak perlu diubah)
         // Background decorative elements
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -242,8 +240,7 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // PERUBAHAN BESAR DI SINI:
-                    // Daftar Akun Baru (KIRI) dan Lupa Password (KANAN) - SEJAJAR
+                    // Register & Forgot Password Links
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -251,7 +248,7 @@ fun LoginScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Daftar Akun Baru - DI KIRI
+                        // Register Link - DI KIRI
                         TextButton(
                             onClick = {
                                 viewModel.clearFields()
@@ -268,7 +265,7 @@ fun LoginScreen(
                             )
                         }
 
-                        // Lupa Password - DI KANAN
+                        // Forgot Password Link - DI KANAN
                         TextButton(
                             onClick = onNavigateToForgot,
                             modifier = Modifier.padding(horizontal = 0.dp, vertical = 4.dp)
@@ -326,7 +323,7 @@ fun LoginScreen(
                             .height(dimensionResource(R.dimen.button_height)),
                         shape = RoundedCornerShape(dimensionResource(R.dimen.button_corner_radius)),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
+                            containerColor = PrimaryColor,
                             contentColor = Color.White
                         ),
                         elevation = ButtonDefaults.buttonElevation(
@@ -346,115 +343,8 @@ fun LoginScreen(
                             )
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_large)))
-
-                    // Divider
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Divider(
-                            modifier = Modifier.weight(1f),
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                            thickness = 1.dp
-                        )
-                        Text(
-                            text = stringResource(R.string.or_continue_with),
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                fontWeight = FontWeight.Medium
-                            ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
-                        )
-                        Divider(
-                            modifier = Modifier.weight(1f),
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                            thickness = 1.dp
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_large)))
-
-                    // Social Login Buttons
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.spacer_large))
-                    ) {
-                        // Google Button dengan warna brand
-                        SocialLoginButton(
-                            icon = R.drawable.ic_google,
-                            text = "Google",
-                            iconTint = Color.Unspecified,
-                            borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            // Handle Google login
-                        }
-
-                        // Facebook Button dengan warna brand
-                        SocialLoginButton(
-                            icon = R.drawable.ic_facebook,
-                            text = "Facebook",
-                            iconTint = Color.Unspecified,
-                            borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            // Handle Facebook login
-                        }
-                    }
-
-                    // HAPUS bagian Register link yang lama di bawah
-                    // Karena sudah dipindah ke atas
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun SocialLoginButton(
-    icon: Int,
-    text: String,
-    modifier: Modifier = Modifier,
-    iconTint: Color = MaterialTheme.colorScheme.onSurface,
-    borderColor: Color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-    onClick: () -> Unit
-) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier
-            .height(dimensionResource(R.dimen.social_button_height))
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(dimensionResource(R.dimen.social_button_corner_radius)),
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        border = BorderStroke(
-            width = 1.dp,
-            color = borderColor
-        )
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = text,
-                modifier = Modifier.size(dimensionResource(R.dimen.icon_size_small)),
-                tint = iconTint
-            )
-            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.spacer_small)))
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Medium
-                ),
-                color = MaterialTheme.colorScheme.onSurface
-            )
         }
     }
 }

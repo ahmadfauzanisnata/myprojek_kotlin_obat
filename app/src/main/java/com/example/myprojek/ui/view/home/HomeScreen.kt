@@ -180,7 +180,7 @@ fun HomeScreen(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    text = "Keluar",
+                                    text = "LogOut",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             },

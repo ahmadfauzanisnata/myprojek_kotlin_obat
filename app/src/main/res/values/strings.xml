@@ -17,48 +17,81 @@
     <string name="cd_logout">Logout</string>
     <string name="cd_add_obat">Tambah Obat</string>
     <string name="cd_delete_obat">Hapus Obat</string>
-    <string name="label_jam_minum">Jam: %1$s</string> <!-- Placeholder text -->
+    <string name="label_jam_minum">Jam: %1$s</string>
+    <string name="hint_search">Cari obat...</string>
+
+    <!-- HomeScreen Strings (Baru) -->
+    <string name="cd_more_options">Opsi lainnya</string>
+    <string name="logout_menu">LogOut</string>
+    <string name="confirm_delete_title">Hapus Obat</string>
+    <string name="confirm_delete_message">Yakin ingin menghapus %s?</string>
+    <string name="delete_button">HAPUS</string>
+    <string name="cancel_button">BATAL</string>
+    <string name="add_first_medication">Tambah Obat Pertama</string>
+    <string name="daftar_obat">Daftar Obat</string>
+    <string name="welcome_user">Selamat Datang,</string>
+    <string name="stats_total_meds">Total Obat</string>
+    <string name="stats_today">Hari Ini</string>
+    <string name="chip_dose">Dosis</string>
+    <string name="chip_frequency">Frekuensi</string>
+    <string name="empty_state_title">Belum ada obat</string>
+    <string name="empty_state_description">Tambahkan obat pertama Anda untuk memulai pengingat</string>
 
     <!-- Entry Screen -->
     <string name="title_entry">Tambah Obat Baru</string>
+    <string name="title_edit">Edit Obat</string>
     <string name="label_nama_obat">Nama Obat</string>
-    <string name="label_dosis">Dosis (misal: 1 Tablet)</string>
-    <string name="label_frekuensi">Frekuensi (misal: 3x Sehari)</string>
-    <string name="label_jam_input">Jam Minum (Format HH:mm)</string>
-    <string name="btn_save">Simpan &amp; Atur Pengingat</string>
+    <string name="label_dosis">Dosis</string>
+    <string name="label_frekuensi">Frekuensi</string>
+    <string name="label_jam_input">Jam Minum</string>
+    <string name="btn_save">Simpan Obat</string>
+    <string name="btn_update">Perbarui Obat</string>
     <string name="error_fill_all">Harap isi semua kolom!</string>
+    <string name="msg_update_success">Data berhasil diperbarui!</string>
+
+    <!-- Entry Screen Placeholders (Baru) -->
+    <string name="hint_nama_obat">Contoh: Paracetamol 500mg</string>
+    <string name="hint_dosis">Contoh: 1 tablet, 5ml</string>
+    <string name="hint_frekuensi">Contoh: 3x sehari</string>
+    <string name="helper_time_picker">Klik untuk memilih waktu</string>
 
     <!-- Notification -->
     <string name="notif_channel_name">Pengingat Obat</string>
     <string name="notif_title">Waktunya Minum Obat</string>
     <string name="notif_message_default">Jangan lupa minum obat Anda!</string>
     <string name="notif_message_format">Waktunya minum: %1$s</string>
-    <!-- Search -->
-    <string name="hint_search">Cari obat...</string>
 
-    <!-- Edit Mode -->
-    <string name="title_edit">Edit Obat</string>
-    <string name="btn_update">Update Obat</string>
-    <string name="msg_update_success">Data berhasil diperbarui!</string>
-
+    <!-- Validation Errors -->
     <string name="error_email_format">Format email tidak valid</string>
     <string name="error_password_length">Password harus lebih dari 5 karakter</string>
     <string name="error_email_not_found">Email tidak terdaftar</string>
     <string name="error_email_exists">Email sudah terdaftar</string>
     <string name="error_password_mismatch">Password konfirmasi tidak sama</string>
+    <string name="text_min_chars">Min. 6 Karakter</string>
 
-    <!-- Navigation Texts -->
+    <!-- Navigation & Links -->
     <string name="text_no_account">Belum punya akun? Daftar di sini</string>
     <string name="text_forgot_password">Lupa Password?</string>
     <string name="text_have_account">Sudah punya akun? Login</string>
+    <string name="text_have_account_login">Sudah punya akun? Masuk</string>
+    <string name="btn_register_new_account">Daftar Akun Baru?</string>
+    <string name="btn_back_to_login">Kembali ke Login</string>
+    <string name="btn_back">Kembali</string>
+    <string name="cd_back">Kembali</string>
 
     <!-- Register Screen -->
     <string name="title_register">Daftar Akun</string>
+    <string name="create_account">Buat Akun</string>
+    <string name="register_subtitle">Isi data untuk membuat akun baru</string>
     <string name="label_confirm_password">Konfirmasi Password</string>
     <string name="btn_register_submit">Daftar Sekarang</string>
+    <string name="label_full_name">Nama Lengkap</string>
+    <string name="agree_to_terms">Saya menyetujui</string>
+    <string name="terms_of_service">Syarat dan Ketentuan</string>
 
     <!-- Forgot Password Screen -->
     <string name="title_forgot_password">Reset Password</string>
+    <string name="subtitle_forgot_password">Masukkan email Anda dan buat password baru untuk mengatur ulang akun</string>
     <string name="label_new_password">Password Baru</string>
     <string name="btn_reset_password">Ganti Password</string>
     <string name="msg_reset_success">Password berhasil diganti. Silakan login.</string>
@@ -66,41 +99,28 @@
     <string name="msg_reset_email_not_found">Email tidak ditemukan.</string>
     <string name="msg_reset_password_success">Password berhasil diubah.</string>
 
-    <string name="text_min_chars">Min. 6 Karakter</string>
-    <string name="btn_back_to_login">Kembali ke Login</string>
-
-
-
-    <string name="cd_back">Kembali</string>
-
-    <!-- tambahkan string berikut ke strings.xml -->
-    <string name="btn_back">Kembali</string>
-    <string name="subtitle_forgot_password">Masukkan email Anda dan buat password baru untuk mengatur ulang akun</string>
+    <!-- Login Screen UI -->
     <string name="welcome_back">Selamat Datang Kembali</string>
     <string name="welcome_subtitle">Silakan masuk untuk melanjutkan</string>
     <string name="hide_password">Sembunyikan password</string>
     <string name="show_password">Tampilkan password</string>
     <string name="or_continue_with">atau lanjutkan dengan</string>
 
-    <string name="create_account">Buat Akun</string>
-    <string name="register_subtitle">Isi data untuk membuat akun baru</string>
-    <string name="label_full_name">Nama Lengkap</string>
-    <string name="agree_to_terms">Saya menyetujui</string>
-    <string name="terms_of_service">Syarat and Ketentuan</string>
+    <!-- User Info & Time Format (Baru) -->
+    <string name="user_email_prefix">Email:</string>
+    <string name="time_format">HH:mm</string>
+    <string name="time_am">AM</string>
+    <string name="time_pm">PM</string>
 
-    <!-- Tambahkan string baru -->
-    <string name="btn_register_new_account"> Daftar Akun Baru? </string>
-
-    <!-- Tambahkan string baru untuk konsistensi -->
-    <string name="text_have_account_login">Sudah punya akun? Masuk</string>
-
-    <string name="cd_more_options">Opsi lainnya</string>
+    <!-- Medication Status (Baru) -->
+    <string name="status_active">Aktif</string>
+    <string name="status_inactive">Tidak aktif</string>
+    <string name="status_completed">Selesai</string>
 
 
-
-
-
-
-
-
+    <!-- Common Buttons (Baru) -->
+    <string name="btn_cancel">Batalkan</string>
+    <string name="btn_confirm">Konfirmasi</string>
+    <string name="btn_yes">Ya</string>
+    <string name="btn_no">Tidak</string>
 </resources>
